@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  database:
+    restart: always
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: pingu123
+      POSTGRES_DB: school_db
+
+  api:
+    build: .
+    command: >
+      sh -c "python manage.py makemigrations --noinput &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    links:
+      - database:database
+    environment:
+      SECRET_KEY: django-insecure-c_^wte1f()5@9@)oeh8btit5x&v_1sw!g%h(5si-=9w4lcea%h
+      DEBUG: "true"
+      DATABASE_NAME: school_db
+      DATABASE_USER: app
+      DATABASE_PASSWORD: pingu123
+      DATABASE_HOST: database
+    depends_on:
+      - database
